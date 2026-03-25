@@ -1,11 +1,11 @@
 import {Link} from "react-router-dom";
-import {useAppSelector} from "../app/store.ts";
+// import {useAppSelector} from "../app/store.ts";
 import {ThemeToggleButton} from "../admin/components/common/ThemeToggleButton.tsx";
 
 function Header() {
-    const user =
-        useAppSelector(redux => redux.auth.user);
-    console.log(user)
+    //const user =
+    //    useAppSelector(redux => redux.auth.user);
+    //console.log(user)
     return (
         <header>
             <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-900">

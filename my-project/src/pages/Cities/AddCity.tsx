@@ -1,14 +1,14 @@
 import {useState} from "react";
-import axios from "axios";
 import {useNavigate} from "react-router-dom";
-import APP_ENV from "../../env";
-import type {ICityCreate} from "../../interfaces/City/ICityCreate.ts";
+import type {ICityCreate} from "../../types/city/ICityCreate";
 import {Editor} from "@tinymce/tinymce-react";
+import {useCreateCityMutation} from "../../services/cityApi.ts";
 
-function AddCities() {
+function AddCityPage() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState<string>("");
-    const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
+    const [createCategory] = useCreateCityMutation();
+
     const [showEditor, setShowEditor] = useState(false);
     const navigate = useNavigate();
 
@@ -19,17 +19,18 @@ function AddCities() {
                 name,
                 description,
             };
-
-            await axios.post(`${APP_ENV.API_BASE_URL}/api/cities/`, model, {
-                headers: { "Content-Type": "application/json" },
-            });
+            await createCategory(model).unwrap();
+            // await axios.post(`${APP_ENV.API_BASE_URL}/api/cities/`, model, {
+            //     headers: { "Content-Type": "application/json" },
+            // });
             navigate(-1);
         } catch (err) {
-            if (axios.isAxiosError(err) && err.response?.data?.errors) {
-                setErrors(err.response.data.errors);
-            } else {
-                setErrors({ General: ["Помилка при додаванні міста"] });
-            }
+            console.log(err);
+            // if (axios.isAxiosError(err) && err.response?.data?.errors) {
+            //     setErrors(err.response.data.errors);
+            // } else {
+            //     setErrors({ General: ["Помилка при додаванні міста"] });
+            // }
         }
     };
 
@@ -45,9 +46,9 @@ function AddCities() {
             >
 
 
-                {errors.General && (
-                    <p className="text-red-600 mb-4 text-center font-medium">{errors.General[0]}</p>
-                )}
+                {/*{errors.General && (*/}
+                {/*    <p className="text-red-600 mb-4 text-center font-medium">{errors.General[0]}</p>*/}
+                {/*)}*/}
 
 
 
@@ -61,7 +62,7 @@ function AddCities() {
                         onChange={(e) => setName(e.target.value)}
                         className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-400 focus:border-green-400 dark:bg-slate-800 dark:text-white transition"
                     />
-                    {errors.Name && <p className="text-red-600 text-sm">{errors.Name[0]}</p>}
+                    {/*{errors.Name && <p className="text-red-600 text-sm">{errors.Name[0]}</p>}*/}
                 </div>
 
                 <div className="mb-5">
@@ -81,9 +82,9 @@ function AddCities() {
                             <span className="text-gray-400 dark:text-slate-500">Натисніть, щоб додати опис...</span>
                         )}
                     </div>
-                    {errors.Description && (
-                        <p className="text-red-600 text-sm">{errors.Description[0]}</p>
-                    )}
+                    {/*{errors.Description && (*/}
+                    {/*    <p className="text-red-600 text-sm">{errors.Description[0]}</p>*/}
+                    {/*)}*/}
                 </div>
 
 
@@ -105,9 +106,9 @@ function AddCities() {
                                 height: 400,
                                 menubar: true,
                                 plugins: [
-                                    "advlist autolink lists link image charmap print preview anchor",
-                                    "searchreplace visualblocks code fullscreen",
-                                    "insertdatetime media table paste code",
+                                    "advlist", "autolink", "lists", "link", "image", "charmap", "preview", "anchor",
+                                    "searchreplace", "visualblocks", "code", "fullscreen",
+                                    "insertdatetime", "media", "table", "code",
                                 ],
                                 toolbar:
                                     "undo redo | formatselect | bold italic backcolor |\
@@ -132,4 +133,4 @@ function AddCities() {
     );
 }
 
-export default AddCities;
+export default AddCityPage;

@@ -1,31 +1,17 @@
-import {combineReducers, configureStore} from "@reduxjs/toolkit";
-// import authReducer from "../Features/auth/authSlice";
+import {configureStore} from "@reduxjs/toolkit";
 import {type TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
-import authSlice from "../features/auth/authSlice.ts";
+import {cityApi} from "../services/cityApi.ts";
 
-// export const store = configureStore({
-//     reducer: {
-//         auth: authReducer,
-//     },
-// });
-const rootReducer = combineReducers({
-    auth: authSlice
-})
-export const setupStore = () => {
-    return configureStore({
-        reducer: rootReducer,
-        middleware: (getDefaultMiddleware) =>
-            getDefaultMiddleware().concat(
-                // authApi.middleware,
-            ),
+export const store = configureStore({
+    reducer: {
+        [cityApi.reducerPath]: cityApi.reducer,
+    },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware()
+        .concat(cityApi.middleware)
+});
 
-    });
-};
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
-export type RootState = ReturnType<typeof rootReducer>;
-export type AppStore = ReturnType<typeof setupStore>;
-export type AppDispatch = AppStore['dispatch'];
-//dispatch - дає команди в redux - у редюсер, що треба, що виконати
-export const useAppDispatch: () => AppDispatch = useDispatch
-//selector - отримує дані з redux у будь-якому місці
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

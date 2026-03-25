@@ -1,51 +1,40 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect, useCallback} from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import APP_ENV from "../../env";
 import {Editor} from "@tinymce/tinymce-react";
+import {useEditCityMutation, useGetCitiesByIdQuery} from "../../services/cityApi.ts";
+import type {ICityEdit} from "../../interfaces/City/ICityEdit.ts";
 
 function EditCity() {
     const { id } = useParams<{ id: string }>();
     const [name, setName] = useState("");
     const [description, setDescription] = useState<string>("");
-    const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
+    const [editCity, { isLoading: isEditing, error: editError }] = useEditCityMutation();
     const [showEditor, setShowEditor] = useState(false);
     const navigate = useNavigate();
 
+    const {data: city, isLoading, error} = useGetCitiesByIdQuery(id);
+
     useEffect(() => {
-        const fetchCity = async () => {
-            try {
-                const response = await axios.get(`${APP_ENV.API_BASE_URL}/api/cities/${id}/`);
-                const country = response.data;
-                setName(country.name);
-                setDescription(country.description);
-            } catch {
-                setErrors({ General: ["Помилка при завантаженні країни"] });
-            }
-        };
-        fetchCity();
-    }, [id]);
+        if (city) {
+            setName(city.name);
+            setDescription(city.description);
+        }
+    }, [city]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const formData = new FormData();
-            formData.append("id", id!);
-            formData.append("name", name);
-            formData.append("description", description);
-
-            await axios.put(`${APP_ENV.API_BASE_URL}/api/cities/${id}/`, formData, {
-                headers: { "Content-Type": "application/json" },
-            });
+            const model : ICityEdit = {
+                name,
+                description,
+            };
+            await editCity({id: id, body: model}).unwrap();
             navigate(-1);
         } catch (err) {
-            if (axios.isAxiosError(err) && err.response?.data?.errors) {
-                setErrors(err.response.data.errors);
-            } else {
-                setErrors({ General: ["Помилка при редагуванні країни"] });
-            }
+            console.error(err);
         }
-
     };
 
     return (
@@ -65,9 +54,7 @@ function EditCity() {
                     Редагувати країну
                 </h2>
 
-                {errors.General && (
-                    <p className="text-red-600 mb-4 text-center font-medium">{errors.General[0]}</p>
-                )}
+                {error && <p className="text-red-600 text-center mb-4">Помилка: {error!.data}</p>}
 
                 <div className="mb-5">
                     <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
@@ -79,7 +66,7 @@ function EditCity() {
                         onChange={(e) => setName(e.target.value)}
                         className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-400 focus:border-green-400 dark:bg-slate-800 dark:text-white transition"
                     />
-                    {errors.Name && <p className="text-red-600 text-sm">{errors.Name[0]}</p>}
+                    {/*{errors.Name && <p className="text-red-600 text-sm">{errors.Name[0]}</p>}*/}
                 </div>
 
 
@@ -100,9 +87,9 @@ function EditCity() {
                             <span className="text-gray-400 dark:text-slate-500">Натисніть, щоб додати опис...</span>
                         )}
                     </div>
-                    {errors.Description && (
-                        <p className="text-red-600 text-sm">{errors.Description[0]}</p>
-                    )}
+                    {/*{errors.Description && (*/}
+                    {/*    <p className="text-red-600 text-sm">{errors.Description[0]}</p>*/}
+                    {/*)}*/}
                 </div>
 
 
@@ -124,9 +111,9 @@ function EditCity() {
                                 height: 400,
                                 menubar: true,
                                 plugins: [
-                                    "advlist autolink lists link image charmap print preview anchor",
-                                    "searchreplace visualblocks code fullscreen",
-                                    "insertdatetime media table paste code",
+                                    "advlist", "autolink", "lists", "link", "image", "charmap", "preview", "anchor",
+                                    "searchreplace", "visualblocks", "code", "fullscreen",
+                                    "insertdatetime", "media", "table", "code",
                                 ],
                                 toolbar:
                                     "undo redo | formatselect | bold italic backcolor |\
