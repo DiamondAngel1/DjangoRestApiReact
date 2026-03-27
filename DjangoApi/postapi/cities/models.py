@@ -11,6 +11,11 @@ class City(models.Model):
         null=True,
         blank=True
     )
+    image = models.ImageField(
+        upload_to="images/",
+        null=True,
+        blank=True
+    )
     class Meta:
         db_table = "tblCities"
         ordering = ['name']

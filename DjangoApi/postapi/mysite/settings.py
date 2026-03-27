@@ -141,9 +141,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+IMAGES_URL = '/images/'
+ 
+IMAGES_ROOT = BASE_DIR / 'images'
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'DjangoApi',
     'DESCRIPTION': 'Django REST API',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
 }

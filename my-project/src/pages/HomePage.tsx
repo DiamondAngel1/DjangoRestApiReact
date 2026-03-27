@@ -50,21 +50,20 @@ function HomePage() {
         <div className="p-5">
             <h1 className="text-3xl dark:text-white font-bold mb-6 text-center">Список міст</h1>
             {/*{error && <p className="text-red-600 text-center mb-4">Помилка: {error}</p>}*/}
-            {error && <p className="text-red-600 text-center mb-4">Помилка: {error!.data}</p>}
+            {error && <p className="text-red-600 text-center mb-4">Помилка: {error.toString()}</p>}
             <div className="p-10 bg-transparent min-h-screen">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
                     {Array.isArray(cities) && cities.map(city => (
-                        <div
-                            key={city.id}
+                        <div key={city.id}
                             className="bg-white/80 dark:bg-slate-900/80 rounded-2xl shadow-xl overflow-hidden transform transition duration-500 hover:scale-105 hover:shadow-xl border border-slate-200/50 dark:border-slate-700/50 hover:shadow-slate-200/20 dark:hover:shadow-slate-900/20"
                         >
-                            <div className="relative h-60 w-full overflow-hidden">
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                            <div className="relative h-60 w-full overflow-hidden bg-cover bg-center" style={{ backgroundImage: city.image ? `url(${city.image})` : "none" }}>
+                                <div className="absolute inset-0 bg-black/60"></div>
                                 <div className="relative z-10 p-6">
-                                    <h2 className="mb-3 dark:text-white text-2xl font-semibold tracking-tight text-heading leading-8">
+                                    <h2 className="mb-3 text-white text-2xl font-semibold tracking-tight text-heading leading-8">
                                         {city.name}
                                     </h2>
-                                    <p className="text-body dark:text-white mb-6" dangerouslySetInnerHTML={{ __html: city.description }}></p>
+                                    <p className="text-body text-white mb-6" dangerouslySetInnerHTML={{ __html: city.description }}></p>
                                 </div>
                             </div>
                             <div className="p-6 text-center">
