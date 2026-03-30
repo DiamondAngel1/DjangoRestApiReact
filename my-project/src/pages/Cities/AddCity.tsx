@@ -35,18 +35,24 @@ function AddCityPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const formData = new FormData();
-            formData.append("name", formValues.name);
-            formData.append("description", description);
-
-            if (fileList.length > 0 && fileList[0].originFileObj) {
-                formData.append("image", fileList[0].originFileObj as File);
+            // const formData = new FormData();
+            // formData.append("name", formValues.name);
+            // formData.append("description", description);
+            //
+            // if (fileList.length > 0 && fileList[0].originFileObj) {
+            //     formData.append("image", fileList[0].originFileObj as File);
+            // }
+            if (fileList.length === 0 || !fileList[0]?.originFileObj) {
+                setImageError(true);
+                return;
             }
-            // const model : ICityCreate = {
-            //     name,
-            //     description,
-            // };
-            await createCity(formData).unwrap();
+            const model : ICityCreate = {
+                ...formValues,
+                image: fileList[0].originFileObj,
+                description,
+
+            };
+            await createCity(model).unwrap();
             // await axios.post(`${APP_ENV.API_BASE_URL}/api/cities/`, model, {
             //     headers: { "Content-Type": "application/json" },
             // });

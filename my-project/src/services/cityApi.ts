@@ -2,7 +2,8 @@ import {createApi} from "@reduxjs/toolkit/query/react";
 import {createBaseQuery} from "../utils/createBaseQuery.ts";
 import type {ICity} from "../interfaces/City/ICity.ts";
 import type {ICityEdit} from "../interfaces/City/ICityEdit.ts";
-
+import type {ICityCreate} from "../interfaces/City/ICityCreate.ts";
+import {serialize} from "object-to-formdata";
 
 export const cityApi= createApi({
     reducerPath: 'cityApi',
@@ -39,12 +40,15 @@ export const cityApi= createApi({
             invalidatesTags: ["Cities"]
         }),
 
-        createCity: builder.mutation<void, FormData>({
-            query: body => ({
-                url: "/",
-                method: "POST",
-                body: body
-            }),
+        createCity: builder.mutation<void, ICityCreate>({
+            query: (body) => {
+                const formData = serialize(body);
+                return {
+                    url: "/",
+                    method: "POST",
+                    body: formData
+                }
+            },
             invalidatesTags: ["Cities"]
         }),
 
