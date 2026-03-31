@@ -22,6 +22,9 @@ function Header() {
                             <Link to="/" className="font-semibold hover:text-gray-200 flex items-center font-medium dark:text-white">
                                 Міста
                             </Link>
+                            <Link to="/departments" className="font-semibold hover:text-gray-200 flex items-center font-medium dark:text-white">
+                                Відділеня
+                            </Link>
                             <Link to="/add-city" className="font-semibold hover:text-gray-200 flex items-center font-medium dark:text-white">
                                 Додати місто
                             </Link>

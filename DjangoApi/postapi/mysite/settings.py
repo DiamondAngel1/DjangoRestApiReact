@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_filters',
     'cities',
     'users',
+    'department',
 ]
 
 REST_FRAMEWORK = {
