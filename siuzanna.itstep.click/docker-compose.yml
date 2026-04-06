@@ -1,0 +1,8 @@
+version: "3.9"
+
+services:
+  api:
+    image: siuzanna/django-api:latest
+    container_name: django-api
+    ports:
+      - "4512:8000"

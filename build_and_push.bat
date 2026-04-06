@@ -1,0 +1,1 @@
+@echo offREM ==== API ====cd DjangoApi\postapiREM збірка образуwsl docker build -t django-api .REM тегування образуwsl docker tag django-api:latest siuzanna/django-api:latestREM пуш у Docker Hubwsl docker push siuzanna/django-api:latestecho DONEpause

@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
+import dj_database_url
 from pathlib import Path
 from corsheaders.defaults import default_headers
 
@@ -26,7 +28,7 @@ SECRET_KEY = 'django-insecure-b)l*=$9raal1y5&h79s8k%w3cetr%y-2j2wi%4h$m+$pn#2oz$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -66,10 +68,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",
+#     "http://127.0.0.1:5173",
+# ]
 
 ROOT_URLCONF = 'mysite.urls'
 
@@ -99,14 +103,19 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # }
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'ep-aged-rice-amh1w08y-pooler.c-5.us-east-1.aws.neon.tech',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'npg_EAWFTMwU2u5p',
-        'PORT': '5432'
-    }
+
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'HOST': 'ep-aged-rice-amh1w08y-pooler.c-5.us-east-1.aws.neon.tech',
+    #     'NAME': 'neondb',
+    #     'USER': 'neondb_owner',
+    #     'PASSWORD': 'npg_EAWFTMwU2u5p',
+    #     'PORT': '5432'
+    # }
+    'default': dj_database_url.parse(
+        os.environ.get("DATABASE_URL")
+    )
+
 }
 
 

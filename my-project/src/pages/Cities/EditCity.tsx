@@ -1,36 +1,43 @@
-import {useState, useEffect, useCallback} from "react";
-import axios from "axios";
+import {useState, useEffect} from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import APP_ENV from "../../env";
 import {Editor} from "@tinymce/tinymce-react";
 import {useEditCityMutation, useGetCitiesByIdQuery} from "../../services/cityApi.ts";
-import type {ICityEdit} from "../../interfaces/City/ICityEdit.ts";
+import ImagesUploader from "../../common/inputs/imagesUploader.tsx";
+import type {UploadFile} from "antd";
 
 function EditCity() {
     const { id } = useParams<{ id: string }>();
+    const numericId = Number(id);
+    const {data: city} = useGetCitiesByIdQuery(numericId);
     const [name, setName] = useState("");
     const [description, setDescription] = useState<string>("");
-    const [editCity, { isLoading: isEditing, error: editError }] = useEditCityMutation();
+    const [editCity] = useEditCityMutation();
     const [showEditor, setShowEditor] = useState(false);
     const navigate = useNavigate();
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [imageError, setImageError] = useState(false);
 
-    const {data: city, isLoading, error} = useGetCitiesByIdQuery(id);
 
     useEffect(() => {
         if (city) {
-            setName(city.name);
+            setName(city.name ?? "");
             setDescription(city.description);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [city]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const model : ICityEdit = {
-                name,
-                description,
-            };
-            await editCity({id: id, body: model}).unwrap();
+            const formData = new FormData();
+            formData.append("name", name);
+            formData.append("description", description);
+            if (fileList.length > 0 && fileList[0].originFileObj) {
+                formData.append("image", fileList[0].originFileObj as File);
+            }
+
+
+            await editCity({ id: numericId, body: formData }).unwrap();
             navigate(-1);
         } catch (err) {
             console.error(err);
@@ -54,7 +61,6 @@ function EditCity() {
                     Редагувати країну
                 </h2>
 
-                {error && <p className="text-red-600 text-center mb-4">Помилка: {error!.data}</p>}
 
                 <div className="mb-5">
                     <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
@@ -91,6 +97,33 @@ function EditCity() {
                     {/*    <p className="text-red-600 text-sm">{errors.Description[0]}</p>*/}
                     {/*)}*/}
                 </div>
+                <div className="mb-5">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+                        Поточне зображення
+                    </label>
+                    {city?.image ? (
+                        <img
+                            src={city.image}
+                            alt="Поточне зображення"
+                            className="w-full h-auto rounded-lg mb-2 border border-gray-300 dark:border-slate-600"
+                        />
+                    ) : (
+                        <p className="text-gray-400 dark:text-slate-500">Зображення відсутнє</p>
+                    )}
+                </div>
+
+                <div className="mb-5">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+                        Нове зображення
+                    </label>
+                    <ImagesUploader
+                        fileList={fileList}
+                        setFileList={setFileList}
+                        imageError={imageError}
+                        setImageError={setImageError}
+                    />
+                </div>
+
 
 
                 <button
